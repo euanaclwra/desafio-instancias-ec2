@@ -1,0 +1,22 @@
+1. Rascunho / Fluxo Inicial 
+	• Usuário envia informação
+	• EC2 recebe o conteúdo
+	• EC2 escreve os dados no volume EBS
+	• Snapshot: EBS copia os dados para o S3 interno *Dentro da Region, mas fora da AZ
+	• Instâncias em outras AZs podem copiar o conteúdo do Snapshot
+	
+2. Durabilidade dos Dados
+	• Inicialmente, o usuário envia as informações para uma única instância EC2 (com um EBS anexado), em uma única AZ.
+	• As réplicas redundantes de segurança são feitas em seguida, através dos snapshots.
+	• O diagrama foi projetado com múltiplas Regions/Availability Zones justamente para representar o layout clássico de produção AWS, priorizando a durabilidade dos dados sem prejudicar a velocidade de acesso.
+
+3. Cross-Region	
+	• Um snapshot fica armazenado em um S3 dentro de uma Region, podendo ser utilizado/copiado em qualquer AZ dentro dela (multi-AZ).
+	• Também é possível replicar o snapshot para outra Region (cross-region), mas esse processo exige mais custo/latência. 
+
+4. Insights, Descobertas e Aprendizados
+	• Cada AZ tem seu próprio EBS, que fica anexado à instância EC2 
+	• Os volumes EBS não se comunicam diretamente na réplica dos dados
+	• Snapshots não são constantementes sincronizados com o EBS, e sim um registro do estado do volume no momento da criação
+	• O S3 que armazena os snapshots são gerenciados internamente pela AWS 
+	
